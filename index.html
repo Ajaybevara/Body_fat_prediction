@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Body Fat Prediction</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f4f9;
+            padding: 30px;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h2, h3, h4 {
+            margin-bottom: 20px;
+        }
+        .form-row {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        .btn-primary {
+            margin-top: 10px;
+        }
+        .list-group-item {
+            margin-bottom: 5px;
+        }
+        img {
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">Body Fat Prediction</h2>
+        <form method="POST">
+            <div class="form-row">
+                {% for feature in ['density', 'age', 'weight', 'height', 'neck', 'chest', 'abdomen', 'hip', 'thigh', 'knee', 'ankle', 'biceps', 'forearm', 'wrist'] %}
+                    <div class="form-group col-md-3">
+                        <label>{{ feature.capitalize() }}</label>
+                        <input type="number" step="0.01" class="form-control" name="{{ feature }}" placeholder="Enter {{ feature }}" required>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Predict</button>
+        </form>
+
+        {% if predictions %}
+        <hr>
+        <h3>Predicted Body Fat Percentages:</h3>
+        <ul class="list-group">
+            {% for model, value in predictions.items() %}
+                <li class="list-group-item">{{ model }}: {{ value }}</li>
+            {% endfor %}
+        </ul>
+
+        <h3>Model Accuracies:</h3>
+        <ul class="list-group">
+            {% for model, metrics in accuracies.items() %}
+                <li class="list-group-item">{{ model }} - R² Score: {{ metrics['R2 Score'] }}%, MSE: {{ metrics['MSE'] }}</li>
+            {% endfor %}
+        </ul>
+
+        <h4><strong>Best Model:</strong> {{ best_model }}</h4>
+
+        {% if plot1 and plot2 %}
+            <h3>Visualizations:</h3>
+            <img src="data:image/png;base64,{{ plot1 }}" class="img-fluid" alt="Input Features Visualization">
+            <img src="data:image/png;base64,{{ plot2 }}" class="img-fluid" alt="Model Predictions Visualization">
+        {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>
